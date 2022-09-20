@@ -1,9 +1,15 @@
 import express, { json, query } from "express";
+import cors from "cors";
 import {PrismaClient} from '@prisma/client';
-// import {convertHourToMinutes} from './utils/convert-hours-string-to-minutes'; INFERNO
+import {convertHourStringToMinutes}  from './utils/convert-hours-string-to-minutes'
+import { convertMinutesToHours } from "./utils/convert-minutes-to-hours";
 
 
 const app = express();
+
+app.use(cors());
+
+app.use(json());
 
 app.use(express.json());
 
@@ -27,24 +33,26 @@ app.get('/games', async (request, response) => {
 })
 
 // Cria um anúncio
-app.post('/game/:id/ads', async (request, response) => {
+app.post('/games/:id/ads', async (request, response) => {
     const gameId = request.params.id;
     const body: any = request.body;
     const ad = await prisma.ad.create({
         data: {
-            gameId: gameId,
-            name: body.name, 
-            yearsPlaying: body.yearsPlayed, 
+            gameId,
+            name: body.name,
+            yearsPlaying: body.yearsPlaying,
             discord: body.discord,
             weekDays: body.weekDays.join(','),
-            hoursStart: convertHourToMinutes(body.hoursStart),
-            hoursEnd: convertHourToMinutes(body.hoursEnd),
+            hoursStart: convertHourStringToMinutes(body.hoursStart),
+            hoursEnd: convertHourStringToMinutes(body.hoursEnd),
             useVoiceChannel: body.useVoiceChannel,
-            createdAt: body.createdAt,
         }
     })
+
+   
+
     return response.status(201).json(ad);
-})
+}); 
 
 // Cconcatenação de recursos p/ pegar todos os anúncios de um game específico
 app.get('/games/:id/ads', async (request, response)=>{
@@ -72,6 +80,8 @@ app.get('/games/:id/ads', async (request, response)=>{
         return {
             ...ad,
             weekDays: ad.weekDays.split(','),
+            hoursStart: convertMinutesToHours(ad.hoursStart),
+            hoursEnd: convertMinutesToHours(ad.hoursEnd),
         }
     }))
 })
@@ -95,4 +105,4 @@ app.get('/ads/:id/discord', async (request, response)=>{
     });
 })
 
-app.listen(3000 );
+app.listen(3000);
