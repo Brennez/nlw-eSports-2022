@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TouchableOpacity, View, Image, FlatList} from 'react-native';
+import { TouchableOpacity, View, Image, FlatList, Text} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Background } from '../../components/Background';
 import {useRoute, useNavigation} from '@react-navigation/native'
@@ -12,6 +12,7 @@ import { styles } from './styles';
 import { Heading } from '../../components/Heading';
 import logoImg from '../../assets/logo-nlw-esports.png'
 import { DuoCard, DuoCardProps } from '../../components/DuoCard';
+import {SmileySad} from 'phosphor-react-native'
 
 
 export function Game() {
@@ -65,9 +66,29 @@ export function Game() {
           keyExtractor={item => item.id}
           renderItem={({item}) => (
 
-            <DuoCard data={item}/>
-
+            <DuoCard 
+              data={item}
+              onConnect={()=> {}} //todo next class
+            />
           )}
+          horizontal
+          style={styles.containerList}
+          contentContainerStyle={[duos.length === 0 ? styles.emptyListContent : styles.contentList]}
+          showsHorizontalScrollIndicator={false}
+          ListEmptyComponent={()=>{
+            return(
+              <>
+              <Text style={styles.emptyListText}>
+                Não há anúncios publicados ainda 
+              </Text>
+              <SmileySad
+              style={styles.smileSad}
+              color={THEME.COLORS.ALERT}
+              size={20}
+            />
+              </>
+            )       
+          }}
         />
 
       </SafeAreaView>
