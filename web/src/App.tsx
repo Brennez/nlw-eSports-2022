@@ -19,6 +19,7 @@ interface Game{
 function App() {
   const [games, setGames] = useState<Game[]>([]);
 
+  // Usando o fetch para a chamada na API
   useEffect(()=> {
     fetch('http://localhost:3000/games').then(response => response.json()).then(
       data => {
