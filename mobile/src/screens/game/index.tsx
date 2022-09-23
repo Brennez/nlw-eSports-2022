@@ -14,15 +14,23 @@ import logoImg from '../../assets/logo-nlw-esports.png'
 import { DuoCard, DuoCardProps } from '../../components/DuoCard';
 import {SmileySad} from 'phosphor-react-native'
 
+import {DuoMatch} from '../../components/DuoMatch';
 
 export function Game() {
 
   const navigation = useNavigation();
 
   const [duos, setDuos] = useState<DuoCardProps[]>([]);
-  
+  const [discordDuoSelected, setDiscordDuoSelected] = useState('');
+
   function handleGoBack(){
     navigation.goBack();
+  }
+
+  async function getDiscordUser(adsId: string){
+    fetch(`http://192.168.1.57:3000/ads/${adsId}/discord`)
+    .then(response => response.json())
+    .then(data => setDiscordDuoSelected(data.discord));
   }
 
   const route = useRoute();
@@ -68,7 +76,7 @@ export function Game() {
 
             <DuoCard 
               data={item}
-              onConnect={()=> {}} //todo next class
+              onConnect={()=> getDiscordUser(item.id)} //todo next class
             />
           )}
           horizontal
@@ -90,6 +98,12 @@ export function Game() {
             )       
           }}
         />
+
+        <DuoMatch
+          onClose={()=>{setDiscordDuoSelected('')}}
+          discord={discordDuoSelected} 
+          visible={discordDuoSelected.length > 0}
+        />  
 
       </SafeAreaView>
     </Background>

@@ -33,6 +33,7 @@ export function CreateAdModal(){
     const formData = new FormData(event.target as HTMLFormElement)
     const data = Object.fromEntries(formData)
 
+    
     if(!data.name){ //se tiver vazio retorna
         return;
     }
